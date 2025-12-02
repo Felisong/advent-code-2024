@@ -1,5 +1,13 @@
 const fsp = require("fs/promises");
 const url = "./sample.txt";
+const slopes = [
+  [1, 1],
+  [3, 1],
+  [5, 1],
+  [7, 1],
+  [1, 2],
+];
+let allValues = [];
 
 const parseInput = async () => {
   let result = [];
@@ -12,34 +20,40 @@ const parseInput = async () => {
 };
 
 parseInput().then((arr) => {
-  // we have the full height and width
-  let treeCounter = 0;
-  let mapValues = {
+  const mapValues = {
     w: arr[0].length - 1,
     h: arr.length - 1,
   };
-  let currentCoordinates = {
-    x: 0,
-    y: 0,
-  };
-  const shift = () => {
-    currentCoordinates.x += 3;
-    currentCoordinates.y += 1;
-  };
-  while (currentCoordinates.y <= mapValues.h) {
-    const currentPos = arr[currentCoordinates.y][currentCoordinates.x];
-    console.log(`x: `, currentCoordinates.x, 'y: ', currentCoordinates.y)
-    if (currentPos === "#") {
-      treeCounter++;
+  // finds the slope
+  const slopeFinder = (x, y) => {
+    // p for positon
+    let p = {
+      x: 0,
+      y: 0,
+    };
+    let treeCounter = 0;
+    
+    while (p.y <= mapValues.h) {
+      const currentP = arr[p.y][p.x];
+      if (currentP === "#") {
+        treeCounter++;
+      }
+      if (p.x > 30 - x && p.x < 31) {
+        p.x = p.x + x - 31;
+        p.y += y;
+      } else {
+        p.x += x;
+        p.y += y;
+      }
     }
-    if (currentCoordinates.x > 27 && currentCoordinates.x < 31) {
-      currentCoordinates = {
-        x: (currentCoordinates.x + 3) - 31,
-        y: currentCoordinates.y + 1,
-      };
-    } else {
-      shift();
-    }
+    console.log(`slope: `, x, y, `trees found: `, treeCounter);
+    return treeCounter;
+  };
+  for (const s of slopes) {
+    allValues.push(slopeFinder(s[0], s[1]));
   }
-  console.log(`tree counter: `, treeCounter);
+  console.log(
+    `total: `,
+    allValues.reduce((a, b) => a * b, 1)
+  );
 });
