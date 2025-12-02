@@ -32,19 +32,14 @@ parseInput().then((arr) => {
       y: 0,
     };
     let treeCounter = 0;
-    
+
     while (p.y <= mapValues.h) {
       const currentP = arr[p.y][p.x];
       if (currentP === "#") {
         treeCounter++;
       }
-      if (p.x > 30 - x && p.x < 31) {
-        p.x = p.x + x - 31;
-        p.y += y;
-      } else {
-        p.x += x;
-        p.y += y;
-      }
+      p.x = (p.x + x) % (mapValues.w + 1);
+      p.y += y;
     }
     console.log(`slope: `, x, y, `trees found: `, treeCounter);
     return treeCounter;
